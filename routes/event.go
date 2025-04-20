@@ -26,7 +26,7 @@ func getEventById(context *gin.Context) {
 		return
 	}
 
-	// 2. Veritabanından ID'ye göre etkinliği çek
+	// 2. Veritabanından ID'ye göre eventi çek
 	event, err := models.GetById(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch event."})
@@ -64,12 +64,11 @@ func updateEvent(context *gin.Context) {
 	// 2. String olan `id` parametresini int64'e çevir
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		// ID geçersizse 400 Bad Request hatası döndür
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id."})
 		return
 	}
 
-	// 3. Bu ID'ye sahip bir etkinlik var mı kontrol et (veritabanından çekmeye çalış)
+	// 3. Bu ID'ye sahip bir event var mı kontrol et (veritabanından çekmeye çalış)
 	_, err = models.GetById(id)
 	if err != nil {
 		// Eğer kayıt yoksa veya hata oluşursa 500 hatası döndür
@@ -99,4 +98,31 @@ func updateEvent(context *gin.Context) {
 
 	// 7. Her şey başarılıysa 200 OK ile başarı mesajı dön
 	context.JSON(http.StatusOK, gin.H{"message": "Event updated successfuly"})
+}
+
+func deleteEvent(context *gin.Context) {
+	idStr := context.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id."})
+		return
+	}
+
+	_, err = models.GetById(id)
+	if err != nil {
+		// Eğer kayıt yoksa veya hata oluşursa 500 hatası döndür
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the event"})
+		return
+	}
+
+	var event models.Event
+	event.ID = id
+
+	err = event.Delete()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not delete the event"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Event successfully deleted."})
+
 }

@@ -2,15 +2,16 @@ package models
 
 import (
 	"example/db"
+	"fmt"
 	"time"
 )
 
 type Event struct {
 	ID          int64
-	Name        string
-	Description string
-	Location    string
-	DateTime    time.Time
+	Name        string    `binding :"required"`
+	Description string    `binding :"required"`
+	Location    string    `binding :"required"`
+	DateTime    time.Time `binding :"required"`
 	UserID      int
 }
 
@@ -48,9 +49,8 @@ func GetAllEvents() ([]Event, error) {
 	defer rows.Close()
 
 	var events []Event
-
 	for rows.Next() {
-		var event Event
+		var event Event // her döngüde yeni bir event structu oluşturuluyor
 		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
 		//Başlangıçta boş olan event structını o satırda buldugumuz tüm verilerle doldurduk
 		if err != nil {
@@ -85,6 +85,7 @@ func GetById(id int64) (*Event, error) {
 }
 
 func (event Event) Update() error {
+	fmt.Println("Update fonksiyonu çağrıldı")
 	query := `
 	UPDATE events
 	SET name =?, description =?, location =?,datetime =?
@@ -98,4 +99,33 @@ func (event Event) Update() error {
 
 	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.ID)
 	return err
+}
+
+func (e Event) Delete() error {
+	fmt.Println("Delete fonksiyonu çağrıldı.")
+	query := `DELETE FROM events
+	WHERE id =?`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close() //stmt nesnesi başarıyla oluşturulmuşsa, kullanılmasından bağımsız olarak kapanacağı garanti edilir.
+
+	result, err := stmt.Exec(e.ID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	fmt.Println(rowsAffected)
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("kayıt bulunamadı, silinemedi")
+	}
+
+	return nil
+
 }
