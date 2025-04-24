@@ -1,11 +1,15 @@
 package models
 
-import "example/db"
+import (
+	"errors"
+	"example/db"
+	"example/utils"
+)
 
 type User struct {
 	ID       int64
-	Email    string `binding :"required"`
-	Password string `binding :"required"`
+	Email    string `binding:"required"`
+	Password string `binding:"required"`
 }
 
 func (user User) Save() error {
@@ -17,11 +21,36 @@ func (user User) Save() error {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(user.Email, user.Password) //Bu satır, az önce hazırlanan stmt objesini çalıştırır.
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.Exec(user.Email, hashedPassword) //Bu satır, az önce hazırlanan stmt objesini çalıştırır.
 	if err != nil {
 		return err
 	}
 
 	user.ID, err = result.LastInsertId()
 	return err
+}
+
+func (u User) ValidateCredentials() error {
+	query := `SELECT id,password FROM users WHERE email = ?`
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&u.ID, &retrievedPassword)
+
+	if err != nil { // If no user was found for that email
+		return errors.New("Credentials invalid")
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+	if !passwordIsValid {
+		return errors.New("Credentials invalid")
+	}
+
+	return nil
+
 }

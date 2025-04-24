@@ -11,4 +11,5 @@ func RegisterRoutes(server *gin.Engine) {
 	server.PUT("/events/:id", updateEvent)   //guncelleme
 	server.DELETE("events/:id", deleteEvent) // delete ,silme
 	server.POST("/signup", signup)           //the goal here is the create new users
+	server.POST("/login", login)
 }
