@@ -80,7 +80,7 @@ func updateEvent(context *gin.Context) {
 	}
 	userId := context.GetInt64("userid")
 	if evnt.UserID != userId {
-		context.JSON(http.StatusForbidden, gin.H{"message": "You are not allowed to update this event"})
+		context.JSON(http.StatusForbidden, gin.H{"message": "Not authorized to update the event"})
 		return
 	}
 
@@ -110,15 +110,14 @@ func deleteEvent(context *gin.Context) {
 	userId := context.GetInt64("userid")
 
 	if evnt.UserID != userId {
-		context.JSON(http.StatusForbidden, gin.H{"message": "You are not allowed to delete this event"})
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized tu update the event"})
 		return
 	}
 
 	// Kullanıcı event'in sahibiyse, silmesine izin ver
-	var event models.Event
-	event.ID = id
+	evnt.ID = id
 
-	err = event.Delete()
+	err = evnt.Delete()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not delete the event"})
 		return

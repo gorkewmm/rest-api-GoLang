@@ -1,6 +1,6 @@
-PUT http://localhost:8080/events/1
+PUT http://localhost:8080/events/21
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvcmtlbXV5c2FsQGV4YW1wbGUuY29tIiwiZXhwIjoxNzQ1NTgwMzEwLCJ1c2VySWQiOjh9.oQNI3h4A5bjgeChwdzxvJsy-wmj2LPm8lLrefN3QGLI
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvcmtlbXV5c2FTQGV4YW1wbGUuY29zbSIsImV4cCI6MTc0NTU4NzUxNSwidXNlcklkIjoxMX0.uLZLlnublaNlQCmlQ-zHhSnBSYstyQrPd5OHVIDbVz0
 
 {
     "name" : "Uasffs",
