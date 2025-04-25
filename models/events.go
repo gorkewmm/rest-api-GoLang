@@ -85,7 +85,6 @@ func GetById(id int64) (*Event, error) {
 }
 
 func (event Event) Update() error {
-	fmt.Println("Update fonksiyonu çağrıldı")
 	query := `
 	UPDATE events
 	SET name =?, description =?, location =?,datetime =?
