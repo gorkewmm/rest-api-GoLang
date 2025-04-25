@@ -1,8 +1,9 @@
-PUT http://localhost:8080/events/16
+PUT http://localhost:8080/events/1
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvcmtlbXV5c2FsQGV4YW1wbGUuY29tIiwiZXhwIjoxNzQ1NTgwMzEwLCJ1c2VySWQiOjh9.oQNI3h4A5bjgeChwdzxvJsy-wmj2LPm8lLrefN3QGLI
 
 {
-    "name" : "Updated test event",
+    "name" : "Uasffs",
     "description" : "A test event",
     "location" : "Test location (Updated!)",
     "dateTime" : "2025-01-01T12:35:00Z"

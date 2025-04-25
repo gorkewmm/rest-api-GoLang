@@ -18,7 +18,7 @@ type Event struct {
 var events = []Event{} //Event struct'larının tutulduğu bir slice (dinamik dizi).
 // = ile events değişkenine boş bir slice atanıyor. (Henüz içinde hiç Event yok.)
 
-func (e Event) Save() error { //database kaydetme işlemi
+func (e *Event) Save() error { //database kaydetme işlemi
 
 	query := `
 	INSERT INTO events(name,description,location,datetime,user_id)

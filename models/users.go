@@ -26,7 +26,7 @@ func (user User) Save() error {
 		return err
 	}
 
-	result, err := stmt.Exec(user.Email, hashedPassword) //Bu satır, az önce hazırlanan stmt objesini çalıştırır.
+	result, err := stmt.Exec(user.Email, hashedPassword) // struct'taki email ve hashlenmiş şifre, veritabanına bu satırda gönderiliyor.
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func (user User) Save() error {
 	return err
 }
 
-func (u User) ValidateCredentials() error {
+func (u *User) ValidateCredentials() error {
 	query := `SELECT id,password FROM users WHERE email = ?`
 	row := db.DB.QueryRow(query, u.Email)
 

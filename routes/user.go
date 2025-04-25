@@ -33,12 +33,13 @@ func login(context *gin.Context) {
 		return
 	}
 
-	err = user.ValidateCredentials()
+	err = user.ValidateCredentials() //kimlik bilgilerini kontrole diyor
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, gin.H{"message": "Could not authenticate user."})
 		return
 	}
 
+	//structtaki password ile databasedeki password aynıysa token oluştur.
 	token, err := utils.GenerateToken(user.Email, user.ID)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not authenticate user."})

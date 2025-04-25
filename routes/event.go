@@ -2,7 +2,6 @@ package routes
 
 import (
 	"example/models"
-	"example/utils"
 	"net/http"
 	"strconv"
 
@@ -39,29 +38,16 @@ func getEventById(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
-	token := context.Request.Header.Get("Authorization")
-
-	if token == "" {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not auhorized"})
-		return
-	}
-
-	userId, err := utils.VerifyToken(token)
-
-	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not auhorized"})
-		return
-	}
+	userId := context.GetInt64("userid")
 
 	var event models.Event
-	err = context.ShouldBindJSON(&event)
+	event.UserID = userId
+
+	err := context.ShouldBindJSON(&event)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request"})
 		return
 	}
-
-	event.UserID = userId
-
 	err = event.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create events. Try again later."})
