@@ -1,9 +1,9 @@
 POST http://localhost:8080/events
 context-type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlbGluQGV4YW1wbGUuY29zbSIsImV4cCI6MTc0NTU4ODMzNSwidXNlcklkIjoyfQ.gSp-h1vVbWoPJGpKOEOoFmu3IBPoXdY3KKM14nS6TD8
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImdvcmtlbUBleGFtcGxlLmNvc20iLCJleHAiOjE3NDU2NjczMDksInVzZXJJZCI6Mn0.RFuB0Jp5vFGZOVxZvFp4lpyftc5doinCqm8tfHCYoOY
 
 {
-    "name":"pelin_1 test",
+    "name":"HALL_1.1 test",
     "description" :"A test events!!!",
     "location":"A test location",
     "datetime" :"2025-01-01T12:35:00.000Z"

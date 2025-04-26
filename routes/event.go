@@ -94,34 +94,4 @@ func updateEvent(context *gin.Context) {
 }
 
 func deleteEvent(context *gin.Context) {
-	idStr := context.Param("id")
-	id, err := strconv.ParseInt(idStr, 10, 64)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id."})
-		return
-	}
-
-	evnt, err := models.GetById(id)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch the event"})
-		return
-	}
-
-	userId := context.GetInt64("userid")
-
-	if evnt.UserID != userId {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized tu update the event"})
-		return
-	}
-
-	// Kullanıcı event'in sahibiyse, silmesine izin ver
-	evnt.ID = id
-
-	err = evnt.Delete()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not delete the event"})
-		return
-	}
-
-	context.JSON(http.StatusOK, gin.H{"message": "Event successfully deleted."})
 }
