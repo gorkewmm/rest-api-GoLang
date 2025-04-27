@@ -48,7 +48,7 @@ func GetAllEvents() ([]Event, error) {
 	}
 	defer rows.Close()
 
-	var events []Event
+	var events []Event // birden fazla Event structu tutmak için başta boş bir slice
 	for rows.Next() {
 		var event Event // her döngüde yeni bir event structu oluşturuluyor
 		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)

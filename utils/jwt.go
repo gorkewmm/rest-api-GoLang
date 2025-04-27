@@ -9,10 +9,11 @@ import (
 
 var secretKey = []byte("supersecret")
 
-func GenerateToken(email string, userId int64) (string, error) {
+func GenerateToken(email string, userId int64, role string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email":  email,                                // Kullanıcının e-posta adresi
-		"userId": userId,                               // Kullanıcının ID'si
+		"email":  email,  // Kullanıcının e-posta adresi
+		"userId": userId, // Kullanıcının ID'si
+		"role":   role,
 		"exp":    time.Now().Add(time.Hour * 1).Unix(), // Token'ın 1 saat sonra geçersiz olacağı zamanı belirtiyor
 
 	})

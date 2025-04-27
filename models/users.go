@@ -10,6 +10,7 @@ type User struct {
 	ID       int64
 	Email    string `binding:"required"`
 	Password string `binding:"required"`
+	Role     string `binding:"required"`
 }
 
 func (user User) Save() error {
@@ -53,4 +54,18 @@ func (u *User) ValidateCredentials() error {
 
 	return nil
 
+}
+
+func FindUserByEmail(email string) (User, error) {
+	query := `
+	SELECT * FROM users where email =?
+	`
+	row := db.DB.QueryRow(query, email)
+	var user User
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Role)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

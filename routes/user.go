@@ -39,8 +39,14 @@ func login(context *gin.Context) {
 		return
 	}
 
+	myUser, err := models.FindUserByEmail(user.Email)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch user."})
+		return
+	}
+
 	//structtaki password ile databasedeki password aynıysa token oluştur.
-	token, err := utils.GenerateToken(user.Email, user.ID)
+	token, err := utils.GenerateToken(user.Email, myUser.ID, myUser.Role)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not authenticate user."})
 		return
