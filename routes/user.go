@@ -4,6 +4,7 @@ import (
 	"example/models"
 	"example/utils"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,4 +54,42 @@ func login(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, gin.H{"message": "Login Successful!", "token": token})
+}
+
+func getUsers(context *gin.Context) {
+	role := context.GetString("role")
+	if role != "admin" {
+		context.JSON(http.StatusForbidden, gin.H{"message": "No permission to get users"})
+		return
+	}
+
+	users, err := models.GetAllUsers()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": " Could not get users"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+func getUserById(context *gin.Context) {
+	strid := context.Param("id")
+	id, err := strconv.ParseInt(strid, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id."})
+		return
+	}
+
+	role := context.GetString("role")
+	if role != "admin" {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "no permission to ger user"})
+		return
+	}
+
+	user, err := models.GetUserById(id)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"message": "Could not fetch user."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"user": user})
 }

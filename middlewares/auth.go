@@ -14,12 +14,13 @@ func Authenticate(context *gin.Context) {
 		return
 	}
 
-	userId, err := utils.VerifyToken(token)
+	userId, role, err := utils.VerifyToken(token)
 
 	if err != nil {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Not auhorized"})
 		return
 	}
 	context.Set("userid", userId) //Bu request'e userid = userId diye bir bilgi ekler.
+	context.Set("role", role)
 	context.Next()
 }

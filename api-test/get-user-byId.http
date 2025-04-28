@@ -1,0 +1,2 @@
+GET http://localhost:8080/admin/users/2
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlbGlud21AZXhhbXBsZS5jb3NtIiwiZXhwIjoxNzQ1NzczMDE0LCJyb2xlIjoiYWRtaW4iLCJ1c2VySWQiOjN9.nSW_qEirGhN7iHdfRyONRcqDK6I4bEHRP8kHX8drBSM

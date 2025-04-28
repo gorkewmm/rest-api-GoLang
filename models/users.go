@@ -7,15 +7,15 @@ import (
 )
 
 type User struct {
-	ID       int64
+	ID       int64  `json:"id"`
 	Email    string `binding:"required"`
 	Password string `binding:"required"`
-	Role     string `binding:"required"`
+	Role     string `json:"role"`
 }
 
 func (user User) Save() error {
-	query := `INSERT INTO users(email, password)
-	values(?,?)`
+	query := `INSERT INTO users(email, password,role)
+	values(?,?,?)`
 	stmt, err := db.DB.Prepare(query) // query kullanılmaya hazır mı?kontrol et
 	if err != nil {
 		return err
@@ -27,12 +27,13 @@ func (user User) Save() error {
 		return err
 	}
 
-	result, err := stmt.Exec(user.Email, hashedPassword) // struct'taki email ve hashlenmiş şifre, veritabanına bu satırda gönderiliyor.
+	result, err := stmt.Exec(user.Email, hashedPassword, user.Role) // struct'taki email ve hashlenmiş şifre, veritabanına bu satırda gönderiliyor.
 	if err != nil {
 		return err
 	}
 
-	user.ID, err = result.LastInsertId()
+	id, err := result.LastInsertId()
+	user.ID = id
 	return err
 }
 
@@ -68,4 +69,39 @@ func FindUserByEmail(email string) (User, error) {
 	}
 
 	return user, nil
+}
+
+func GetAllUsers() ([]User, error) {
+	query := `
+	SELECT * FROM users
+	`
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	var user []User
+	for rows.Next() {
+		var users User
+		err = rows.Scan(&users.ID, &users.Email, &users.Password, &users.Role) // rows.scan struc veya değişken ister
+		if err != nil {
+			return nil, err
+		}
+		user = append(user, users)
+	}
+	return user, nil
+}
+
+func GetUserById(id int64) (*User, error) {
+	query := `
+	SELECT * FROM users WHERE ID =?
+	`
+	row := db.DB.QueryRow(query, id)
+
+	var user User
+	err := row.Scan(&user.ID, &user.Email, &user.Password, &user.Role)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
