@@ -9,8 +9,6 @@ import (
 )
 
 func registerForEvent(context *gin.Context) {
-	userId := context.GetInt64("userid")
-
 	eventId, err := strconv.ParseInt(context.Param("id"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse event id"})
@@ -23,6 +21,7 @@ func registerForEvent(context *gin.Context) {
 		return
 	}
 
+	userId := context.GetInt64("userid")
 	err = event.Register(userId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not register user for event"})

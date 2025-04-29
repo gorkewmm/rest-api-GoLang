@@ -12,7 +12,7 @@ func RegisterRoutes(server *gin.Engine) {
 	server.GET("/admin/users", middlewares.Authenticate, getUsers)
 	server.GET("/admin/users/:id", middlewares.Authenticate, getUserById)
 
-	server.POST("admin/events", middlewares.Authenticate, createEvent)  // veri ekleme
+	server.POST("/admin/events", middlewares.Authenticate, createEvent) // veri ekleme
 	server.PUT("/events/:id", middlewares.Authenticate, updateEvent)    //guncelleme
 	server.DELETE("/events/:id", middlewares.Authenticate, deleteEvent) // delete ,silme
 

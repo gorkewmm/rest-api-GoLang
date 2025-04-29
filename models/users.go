@@ -37,6 +37,7 @@ func (user User) Save() error {
 	return err
 }
 
+// login yaparken haslenmıs sıfreyle, girilen şifreyi karsılaştırıyor
 func (u *User) ValidateCredentials() error {
 	query := `SELECT id,password FROM users WHERE email = ?`
 	row := db.DB.QueryRow(query, u.Email)
@@ -73,7 +74,7 @@ func FindUserByEmail(email string) (User, error) {
 
 func GetAllUsers() ([]User, error) {
 	query := `
-	SELECT * FROM users
+	SELECT id, email, role FROM users
 	`
 	rows, err := db.DB.Query(query)
 	if err != nil {
@@ -83,7 +84,7 @@ func GetAllUsers() ([]User, error) {
 	var user []User
 	for rows.Next() {
 		var users User
-		err = rows.Scan(&users.ID, &users.Email, &users.Password, &users.Role) // rows.scan struc veya değişken ister
+		err = rows.Scan(&users.ID, &users.Email, &users.Role) // rows.scan struc veya değişken ister
 		if err != nil {
 			return nil, err
 		}

@@ -1,10 +1,11 @@
 POST http://localhost:8080/admin/events
 context-type: application/json
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBlbGlubUBleGFtcGxlLmNvc20iLCJleHAiOjE3NDU3NzIwNzYsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6Mn0.xiWxHqYAzYlShOHMp6sNFkS3dweW3xscLDMNGXb-e8Y
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIxZW1haWxAZXhhbXBsZS5jb20iLCJleHAiOjE3NDU5NTg0ODEsInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6MX0.DAdftHFKR4ImzWU8OFoD2Ru2F8FdYq7hQZz7P7ZPeF0
 
 {
-    "name":"pelintest3",
+    "name":"event5 of user1",
     "description" :"A test events!!!",
     "location":"A test location",
-    "datetime" :"2025-01-01T12:35:00.000Z"
+    "datetime" :"2025-01-01T12:35:00.000Z",
+    "price":100.00
 }

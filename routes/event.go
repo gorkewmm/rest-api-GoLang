@@ -34,8 +34,18 @@ func getEventById(context *gin.Context) {
 		return
 	}
 
-	// 3. Başarılıysa JSON olarak döndür
-	context.JSON(http.StatusOK, event)
+	// Burada kayıtlı kişi sayısını alıyoruz
+	registrationCount, err := event.GetRegistrationCount()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch registration count"})
+		return
+	}
+
+	// Event bilgisi + kayıtlı kişi sayısını dönüyoruz
+	context.JSON(http.StatusOK, gin.H{
+		"event":            event,
+		"registered_users": registrationCount,
+	})
 }
 
 func createEvent(context *gin.Context) {
@@ -58,7 +68,7 @@ func createEvent(context *gin.Context) {
 
 	err = event.Save()
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create events. Try again later."})
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
