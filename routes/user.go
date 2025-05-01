@@ -122,3 +122,72 @@ func updateUser(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "User updated sucessfuly"})
 }
+
+func deleteUser(context *gin.Context) {
+	idStr := context.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id"})
+		return
+	}
+
+	if context.GetInt64("userid") != id && context.GetString("role") != "admin" {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "No permission to delete user"})
+		return
+	}
+
+	err = models.DeleteUser(id)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not delete user"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "User deleted sucessfuly"})
+}
+
+func changePassword(context *gin.Context) {
+	idStr := context.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id"})
+		return
+	}
+
+	userid := context.GetInt64("userid")
+	if userid != id {
+		context.JSON(http.StatusForbidden, gin.H{"message": "You can only change your own password"})
+		return
+	}
+
+	user, err := models.GetUserById(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not get user"})
+		return
+	}
+
+	var requestBody struct {
+		Password    string `json:"password" binding:"required"`    // mevcut şifre
+		NewPassword string `json:"newPassword" binding:"required"` // yeni şifre
+	}
+	err = context.ShouldBindJSON(&requestBody)
+
+	if err != nil || requestBody.NewPassword == "" {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Missing or invalid new password"})
+		return
+	}
+
+	bool := utils.CheckPasswordHash(requestBody.Password, user.Password)
+	if !bool {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Incorrect current password"})
+		return
+	}
+
+	var myuser models.User
+	myuser.Password = requestBody.NewPassword
+
+	err = myuser.ChangePassword(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Password update failed"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Password changed successfully!"})
+}

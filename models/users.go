@@ -125,3 +125,40 @@ func (user User) UserUpdate(id int64) error {
 	}
 	return err
 }
+
+func DeleteUser(id int64) error {
+	query := `
+	DELETE FROM users WHERE id =?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return err
+}
+
+func (user User) ChangePassword(id int64) error {
+	query := `
+	UPDATE users SET password = ? WHERE id = ?
+	`
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	hashedPassword, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(hashedPassword, id)
+	return err
+}
