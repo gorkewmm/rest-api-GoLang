@@ -93,3 +93,26 @@ func getUserById(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"user": user})
 }
+
+func updateUser(context *gin.Context) {
+	idStr := context.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse user id"})
+		return
+	}
+
+	var user models.User
+	err = context.ShouldBindJSON(&user)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid JSON body"})
+		return
+	}
+	err = user.UserUpdate(id)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not updated users. Try again later."})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "User updated sucessfuly"})
+}

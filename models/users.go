@@ -106,3 +106,22 @@ func GetUserById(id int64) (*User, error) {
 	}
 	return &user, nil
 }
+
+func (user User) UserUpdate(id int64) error {
+	query := `
+	UPDATE users SET email =?,
+	password =?, role=? WHERE id =?
+	`
+	stmt, err := db.DB.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(user.Email, user.Password, user.Role, id)
+	if err != nil {
+		return err
+	}
+	return err
+}
