@@ -1,8 +1,9 @@
-PUT http://localhost:8080/users/2
+PUT http://localhost:8080/users/7
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im15dXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc0NjExOTIyMiwicm9sZSI6InVzZXIiLCJ1c2VySWQiOjd9.Gf_YcQCfT3tvfMXPMVSBDj7rUUTYkdHuTnurordSa2g
 
 {
-  "email": "yeniemail@example.com",
-  "password": "yenisifre123",
+  "email": "guncs@example.com",
+  "password": "ygus",
   "role": "user"
 }

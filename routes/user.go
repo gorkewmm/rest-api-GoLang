@@ -108,6 +108,12 @@ func updateUser(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid JSON body"})
 		return
 	}
+
+	if context.GetString("role") != "admin" && context.GetInt64("userid") != id {
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid user"})
+		return
+	}
+
 	err = user.UserUpdate(id)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not updated users. Try again later."})
