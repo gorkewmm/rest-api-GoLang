@@ -53,7 +53,11 @@ func login(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "Login Successful!", "token": token})
+	context.JSON(http.StatusOK, gin.H{
+		"message": "Login Successful!",
+		"token":   token,
+		"role":    myUser.Role, // 👈 role bilgisini ekle!
+	})
 }
 
 func getUsers(context *gin.Context) {

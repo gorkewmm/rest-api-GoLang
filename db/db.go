@@ -38,18 +38,20 @@ func createTables() {
 	}
 
 	createEventTable := `
-	CREATE TABLE IF NOT EXISTS events (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
-		description TEXT NOT NULL,
-		location TEXT NOT NULL,
-		datetime DATETIME NOT NULL,
-		user_id INTEGER,
-		price REAL NOT NULL,
-		registered_users INTEGER DEFAULT 0,
-		FOREIGN KEY(user_id) REFERENCES users(id)
-	)
-	`
+    CREATE TABLE IF NOT EXISTS events (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT NOT NULL,
+	description TEXT NOT NULL,
+	location TEXT NOT NULL,
+	datetime DATETIME NOT NULL,
+	user_id INTEGER,
+	price REAL NOT NULL,
+	registered_users INTEGER DEFAULT 0,
+	image TEXT,
+	FOREIGN KEY(user_id) REFERENCES users(id)
+)
+`
+
 	_, err = DB.Exec(createEventTable)
 
 	if err != nil {

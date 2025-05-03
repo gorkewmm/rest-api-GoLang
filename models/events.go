@@ -7,14 +7,15 @@ import (
 )
 
 type Event struct {
-	ID              int64
-	Name            string    `binding :"required"`
-	Description     string    `binding :"required"`
-	Location        string    `binding :"required"`
-	DateTime        time.Time `binding :"required"`
-	UserID          int64
-	Price           float64 `binding :"required"`
-	RegisteredUsers int64   `json:"registered_users"`
+	ID              int64     `json:"id"`
+	Name            string    `json:"name" binding:"required"`
+	Description     string    `json:"description" binding:"required"`
+	Location        string    `json:"location" binding:"required"`
+	DateTime        time.Time `json:"datetime" binding:"required"`
+	UserID          int64     `json:"user_id"`
+	Price           float64   `json:"price" binding:"required"`
+	RegisteredUsers int64     `json:"registered_users"`
+	Image           string    `json:"image"`
 }
 
 var events = []Event{} //Event struct'larının tutulduğu bir slice (dinamik dizi).
@@ -23,10 +24,9 @@ var events = []Event{} //Event struct'larının tutulduğu bir slice (dinamik di
 func (e *Event) Save() error { //database kaydetme işlemi
 	// 0 kayıtla başlasın
 	e.RegisteredUsers = 0
-
 	query := `
-	INSERT INTO events(name,description,location,datetime,user_id,price,registered_users)
-	VALUES (?,?,?,?,?,?,?)`
+    INSERT INTO events(name, description, location, datetime, user_id, price, registered_users, image)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
 
 	stmt, err := db.DB.Prepare(query)
 	if err != nil {
@@ -34,7 +34,7 @@ func (e *Event) Save() error { //database kaydetme işlemi
 	}
 	defer stmt.Close() //stmt nesnesi başarıyla oluşturulmuşsa, kullanılmasından bağımsız olarak kapanacağı garanti edilir.
 
-	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID, e.Price, e.RegisteredUsers)
+	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID, e.Price, e.RegisteredUsers, e.Image)
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func GetAllEvents() ([]Event, error) {
 	var events []Event // birden fazla Event structu tutmak için başta boş bir slice
 	for rows.Next() {
 		var event Event // her döngüde yeni bir event structu oluşturuluyor
-		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID, &event.Price, &event.RegisteredUsers)
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID, &event.Price, &event.RegisteredUsers, &event.Image)
 		//Başlangıçta boş olan event structını o satırda buldugumuz tüm verilerle doldurduk
 		if err != nil {
 			return nil, err
@@ -83,6 +83,7 @@ func GetById(id int64) (*Event, error) {
 		&event.UserID,
 		&event.Price,
 		&event.RegisteredUsers,
+		&event.Image,
 	)
 	if err != nil {
 		return nil, err
@@ -93,7 +94,7 @@ func GetById(id int64) (*Event, error) {
 func (event Event) Update() error {
 	query := `
 	UPDATE events
-	SET name =?, description =?, location =?,datetime =?,price =?
+	SET name =?, description =?, location =?,datetime =?,price =?, image = ?
 	WHERE id = ?
 	`
 	stmt, err := db.DB.Prepare(query)
@@ -102,7 +103,7 @@ func (event Event) Update() error {
 	}
 	defer stmt.Close() //stmt nesnesi başarıyla oluşturulmuşsa, kullanılmasından bağımsız olarak kapanacağı garanti edilir.
 
-	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.Price, event.ID)
+	_, err = stmt.Exec(event.Name, event.Description, event.Location, event.DateTime, event.Price, event.Image, event.ID)
 	return err
 }
 
@@ -206,4 +207,28 @@ func (e *Event) GetRegistrationCount() (int64, error) {
 		return 0, err
 	}
 	return count, nil
+}
+
+func GetEventsByUserId(userId int64) ([]Event, error) {
+	query := `
+		SELECT e.* FROM events e
+		INNER JOIN registrations r ON e.id = r.event_id
+		WHERE r.user_id = ?
+	`
+	rows, err := db.DB.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var events []Event
+	for rows.Next() {
+		var event Event
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID, &event.Price, &event.RegisteredUsers, &event.Image)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+	return events, nil
 }
